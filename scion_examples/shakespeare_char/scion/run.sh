@@ -8,11 +8,11 @@ NGPUS=4
 
 for width in 256 512 1024 2048
 do
-    # for lr in 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 
+    # for lr in 0.125 0.0625 0.03125 0.015625 0.0078125 0.00390625 0.001953125 
     for lr in 0.5 0.25 0.125 0.0625 0.03125 
     do
-        for seed in 1 2 3 # FULL SWEEP
-        # for seed in 1
+        # for seed in 1 2 3 # FULL SWEEP
+        for seed in 1
         do
             head_size=64
             n_heads=$((width / head_size))
