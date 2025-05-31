@@ -47,7 +47,7 @@ do
         --depth_alpha_exp=$depth_alpha_exp \
         --seed=$seed \
         --backend='nccl' \
-        --device='mps' \
+        --device='cuda' \
         --dtype='float32' \
         --compile=False
     done

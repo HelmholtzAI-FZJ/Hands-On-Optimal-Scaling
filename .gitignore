@@ -13,3 +13,13 @@ venv/
 mup_examples/*/*/out/*
 completep_examples/*/*/out/*
 completep_examples/data
+scion_examples/*/*/out/*
+scion_examples/*/*/out
+
+
+llm_env/python
+llm_env/.tmp
+llm_env/.cache
+llm_env/venv*
+.vscode
+.cache

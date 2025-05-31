@@ -1,3 +1,4 @@
+NGPUS=4
 for width in 256 512 1024 2048 4096
 do
     for seed in 1 2 3 4 5
@@ -8,7 +9,7 @@ do
     mup_width_multiplier=$(echo "scale=8; $width/$mup_base_width" | bc -l)
     out_dir="mup_examples/coord_check_shakespeare_char/sp_with_mup_hidden_init_and_lr_partial_output_logits/out/width${width}_depth2_seed${seed}"
     mup_output_alpha=$(echo "scale=8; sqrt($mup_width_multiplier)" | bc -l)
-    python train.py \
+    torchrun --standalone --nproc_per_node=$NGPUS train.py \
         --out_dir=$out_dir \
         --eval_interval=1 \
         --log_interval=1 \
@@ -45,7 +46,7 @@ do
         --mup_enable_coord_check_logging=True \
         --seed=$seed \
         --backend='nccl' \
-        --device='mps' \
+        --device='cuda' \
         --dtype='float32' \
         --compile=False
     done

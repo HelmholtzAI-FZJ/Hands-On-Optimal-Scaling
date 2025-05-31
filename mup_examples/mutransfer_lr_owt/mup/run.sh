@@ -1,11 +1,13 @@
 # Single-GPU Launching
-LAUNCHER=python
+# LAUNCHER=python
 
 # Multi-GPU Launching (single node)
-#GPU=2
-#LAUNCHER=torchrun --standalone --nproc_per_node=$GPU
+GPU=4
+LAUNCHER=torchrun --standalone --nproc_per_node=$GPU
 
 LAYERS=2
+
+
 
 for width in 256 512 1024 2048
 do

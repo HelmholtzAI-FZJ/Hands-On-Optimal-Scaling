@@ -1,13 +1,23 @@
+NGPUS=4
+# here is the LR sweep from the original Repo, [2-8 .... 2^(-18)]
+# for lr in 0.00390625 0.001953125 0.0009765625 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00001525878906 0.000007629394531 0.000003814697266
+
+# to make it faster, we only run the following LR values,  the optianl LR should be 2^(-11)
+# [2^(-9), 2^(-10), 2^(-11), 2^(-12) 2^(-13)]
+# for lr in 0.001953125 0.0009765625 0.00048828125 0.000244140625 0.0001220703125
+
 for width in 256 512 1024 2048
 do
-    for lr in 0.00390625 0.001953125 0.0009765625 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00001525878906 0.000007629394531 0.000003814697266
+    # for lr in 0.00390625 0.001953125 0.0009765625 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00048828125 0.000244140625 0.0001220703125 0.00006103515625 0.00003051757812 0.00001525878906 0.000007629394531 0.000003814697266
+    for lr in 0.001953125 0.0009765625 0.00048828125 0.000244140625 0.0001220703125
     do
-        for seed in 1 2 3
+        # for seed in 1 2 3 # FULL SWEEP
+        for seed in 1
         do
             head_size=64
             n_heads=$((width / head_size))
             out_dir="mup_examples/mutransfer_lr_shakespeare_char/sp/out/width${width}_depth2_seed${seed}_lr${lr}"
-            python train.py \
+            torchrun --standalone --nproc_per_node=$NGPUS train.py \
                 --out_dir=$out_dir \
                 --eval_interval=1 \
                 --log_interval=1 \
@@ -38,7 +48,7 @@ do
                 --decay_lr=False \
                 --seed=$seed \
                 --backend='nccl' \
-                --device='mps' \
+                --device='cuda' \
                 --dtype='float32' \
                 --compile=False
         done

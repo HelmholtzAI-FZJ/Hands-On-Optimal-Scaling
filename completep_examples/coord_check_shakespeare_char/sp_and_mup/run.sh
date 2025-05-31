@@ -44,7 +44,7 @@ do
         --depth_alpha_enabled=False  \
         --seed=$seed \
         --backend='nccl' \
-        --device='mps' \
+        --device='cuda' \
         --dtype='float32' \
         --compile=False
     done

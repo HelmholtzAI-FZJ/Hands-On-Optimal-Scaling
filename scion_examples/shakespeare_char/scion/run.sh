@@ -1,0 +1,53 @@
+NGPUS=4
+# here is the LR sweep from the original Repo, [2-0 .... 2^(-6)]
+# for lr in 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 
+
+# to make it faster, we only run the following LR values,  the optianl LR should be 2^(-5) or 2^(-6)
+# [2^(-1), 2^(-2), 2^(-3), 2^(-4), 2^(-5), ]
+# for lr in 0.5 0.25 0.125 0.0625 0.03125
+
+for width in 256 512 1024 2048
+do
+    # for lr in 1 0.5 0.25 0.125 0.0625 0.03125 0.015625 
+    for lr in 0.5 0.25 0.125 0.0625 0.03125 
+    do
+        for seed in 1 2 3 # FULL SWEEP
+        # for seed in 1
+        do
+            head_size=64
+            n_heads=$((width / head_size))
+            out_dir="scion_examples/shakespeare_char/scion/out/width${width}_depth2_seed${seed}_lr${lr}"
+            torchrun --standalone --nproc_per_node=$NGPUS train_scion.py \
+                --out_dir=$out_dir \
+                --eval_interval=1 \
+                --log_interval=1 \
+                --eval_iters=1 \
+                --eval_only=False \
+                --skip_val_loss=True \
+                --always_save_checkpoint=False \
+                --never_save_checkpoint=True \
+                --init_from='scratch' \
+                --wandb_log=False \
+                --csv_log=True \
+                --dataset='shakespeare_char' \
+                --gradient_accumulation_steps=8 \
+                --batch_size=1 \
+                --block_size=1024 \
+                --n_layer=2 \
+                --n_head=$n_heads \
+                --n_embd=$width \
+                --dropout=0.0 \
+                --bias=False \
+                --init_std=0.02 \
+                --learning_rate=$lr \
+                --momentum=0.1 \
+                --max_iters=122 \
+                --decay_lr=False \
+                --seed=$seed \
+                --backend='nccl' \
+                --device='cuda' \
+                --dtype='float32' \
+                --compile=False
+        done
+    done
+done
